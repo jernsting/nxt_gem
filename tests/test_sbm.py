@@ -19,6 +19,7 @@ from gem.embedding.sdne import SDNE
 
 
 from tests.fit_model import fit_model
+from tests.utils import read_gpickle
 
 
 class SBMTest(unittest.TestCase):
@@ -30,7 +31,7 @@ class SBMTest(unittest.TestCase):
         file_prefix = os.path.join(self.source_dir, 'data/sbm.gpickle')
 
         # Load graph
-        G = nx.read_gpickle(file_prefix)
+        G = read_gpickle(file_prefix)
         # convert G (networkx 1.x digraph) to networkx 2.x
         H = nx.DiGraph()
         H.add_nodes_from(G.node)
