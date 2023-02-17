@@ -6,18 +6,15 @@ image:
 
 environment:
   matrix:
-  # - TOXENV: py27  # https://devguide.python.org/devcycle/#end-of-life-branches
-  # - TOXENV: py35
-  - TOXENV: py36    # https://devguide.python.org/#status-of-python-branches
-  - TOXENV: py37
-  - TOXENV: py38
-  - TOXENV: py39
-  - TOXENV: py310
+    - PY: 3.11
+    - PY: 3.10
+    - PY: 3.9
+    - PY: 3.8
 
 build: false
 
 install:
-  - source $HOME/venv3.10/bin/activate
+  - source ${HOME}/venv${PY}/bin/activate
   - python -m pip install tox
 
 test_script:
