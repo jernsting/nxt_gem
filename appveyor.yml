@@ -17,7 +17,8 @@ environment:
 build: false
 
 install:
-  - py -m pip install tox
+  - source $HOME/venv3.10
+  - python -m pip install tox
 
 test_script:
-  - py -m tox
+  - python -m tox
