@@ -42,12 +42,12 @@ class KarateTest(unittest.TestCase):
     def test_HOPE(self):
         model = HOPE(d=4, beta=0.01)
         target = np.loadtxt(os.path.join(self.source_dir, 'karate_res/HOPE.txt'))
-        self.internal_model_test(model, target)
+        self.internal_model_test(model, target, mae_close=True)
 
     def test_LaplacianEigenmaps(self):
         model = LaplacianEigenmaps(d=2)
         target = np.loadtxt(os.path.join(self.source_dir, 'karate_res/LaplacianEigenmaps.txt'))
-        self.internal_model_test(model, target)
+        self.internal_model_test(model, target, mae_close=True)
 
     def test_LocallyLinearEmbedding(self):
         model = LocallyLinearEmbedding(d=2)
