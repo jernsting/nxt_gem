@@ -109,7 +109,7 @@ class SDNE(StaticGraphEmbedding):
 
         # Model
         self._model = Model(inputs=x_in, outputs=[x_diff1, x_diff2, y_diff])
-        sgd = SGD(lr=self._xeta, decay=1e-5, momentum=0.99, nesterov=True)
+        sgd = SGD(learning_rate=self._xeta, weight_decay=1e-5, momentum=0.99, nesterov=True)
         self._model.compile(
             optimizer=sgd,
             loss=[weighted_mse_x, weighted_mse_x, weighted_mse_y],
