@@ -1,6 +1,7 @@
 # appveyor.yml - https://www.appveyor.com/docs/lang/python
 ---
 image:
+  - Ubuntu2004
   - Ubuntu
 
 environment:
@@ -16,8 +17,7 @@ environment:
 build: false
 
 install:
-  - py -m pip install flake8 pytest_cov coveralls
-  - if [ -f requirements.txt ]; then py -m pip install -r requirements.txt; fi
+  - py -m pip install tox
 
 test_script:
-  - PYTHONPATH=.. py -m pytest --cov=./gem
+  - py -m tox
