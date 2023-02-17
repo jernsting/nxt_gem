@@ -48,7 +48,7 @@ class SDNE(StaticGraphEmbedding):
                         is_weighted=False, no_python=False):
         if not graph:
             raise ValueError('graph needed')
-        sparse = nx.to_scipy_sparse_matrix(graph)
+        sparse = nx.to_scipy_sparse_array(graph)
         sparse = (sparse + sparse.T) / 2
         self._node_num = len(graph.nodes)
 
