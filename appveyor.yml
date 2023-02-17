@@ -15,7 +15,8 @@ build: false
 
 install:
   - source ${HOME}/venv${PY}/bin/activate
-  - python -m pip install tox
+  - pip install flake8 pytest_cov coveralls
+  - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
 test_script:
-  - python -m tox
+  - PYTHONPATH=.. pytest --cov=./gem
