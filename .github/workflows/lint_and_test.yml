@@ -32,6 +32,4 @@ jobs:
       run: |
         PYTHONPATH=. pytest --cov=./gem
     - name: Coveralls
-      run: coveralls
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      uses: coverallsapp/github-action@v2
