@@ -8,15 +8,13 @@ import unittest
 
 import numpy as np
 
-from gem.utils import graph_util
-
 from gem.embedding.gf import GraphFactorization
 from gem.embedding.hope import HOPE
 from gem.embedding.lap import LaplacianEigenmaps
 from gem.embedding.lle import LocallyLinearEmbedding
 from gem.embedding.node2vec import node2vec
 from gem.embedding.sdne import SDNE
-
+from gem.utils import graph_util
 from tests.fit_model import fit_model
 
 

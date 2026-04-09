@@ -1,5 +1,6 @@
-import numpy as np
 import secrets
+
+import numpy as np
 
 
 def get_random_edge_pairs(node_num, sample_ratio=0.01, is_undirected=True):

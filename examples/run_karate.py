@@ -3,12 +3,10 @@ Run the graph embedding methods on Karate graph and evaluate them on
 graph reconstruction and visualization. Please copy the
 gem/data/karate.edgelist to the working directory
 """
-import matplotlib.pyplot as plt
+from argparse import ArgumentParser
 from time import time
 
-from gem.utils import graph_util
-from gem.evaluation import visualize_embedding as viz
-from gem.evaluation import evaluate_graph_reconstruction as gr
+import matplotlib.pyplot as plt
 
 from gem.embedding.gf import GraphFactorization
 from gem.embedding.hope import HOPE
@@ -16,8 +14,9 @@ from gem.embedding.lap import LaplacianEigenmaps
 from gem.embedding.lle import LocallyLinearEmbedding
 from gem.embedding.node2vec import node2vec
 from gem.embedding.sdne import SDNE
-from argparse import ArgumentParser
-
+from gem.evaluation import evaluate_graph_reconstruction as gr
+from gem.evaluation import visualize_embedding as viz
+from gem.utils import graph_util
 
 if __name__ == '__main__':
     ''' Sample usage
@@ -58,7 +57,7 @@ if __name__ == '__main__':
 
     # For each model, learn the embedding and evaluate on graph reconstruction and visualization
     for embedding in models:
-        print('Num nodes: %d, num edges: %d' % (G.number_of_nodes(), G.number_of_edges()))
+        print(f'Num nodes: {G.number_of_nodes()}, num edges: {G.number_of_edges()}')
         t1 = time()
         # Learn embedding - accepts a networkx graph or file with edge list
         Y = embedding.learn_embedding(graph=G, edge_f=None, is_weighted=True, no_python=True)

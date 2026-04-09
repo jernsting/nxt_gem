@@ -16,7 +16,7 @@ class LaplacianEigenmaps(StaticGraphEmbedding):
         Args:
             d: dimension of the embedding
         """
-        super(LaplacianEigenmaps, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def learn_embedding(self, graph=None,
                         is_weighted=False, no_python=False):
@@ -33,7 +33,7 @@ class LaplacianEigenmaps(StaticGraphEmbedding):
 
         p_d_p_t = np.dot(v, np.dot(np.diag(w), v.T))
         eig_err = np.linalg.norm(p_d_p_t - l_sym)
-        print('Laplacian matrix recon. error (low rank): %f' % eig_err)
+        print(f'Laplacian matrix recon. error (low rank): {eig_err}')
         return self._X.real
 
     def get_edge_weight(self, i, j):

@@ -1,8 +1,7 @@
 import numpy as np
-
-from tensorflow.keras.layers import Input, Dense
-from tensorflow.keras.models import Model, model_from_json
 import tensorflow.keras.regularizers as Reg
+from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.models import Model, model_from_json
 
 
 def model_batch_predictor(model, X, batch_size):
@@ -124,8 +123,8 @@ def loadmodel(filename):
     model = None
     try:
         model = model_from_json(open(filename).read())
-    except (FileNotFoundError, IOError):
-        print('Error reading file: {0}. Cannot load previous model'.format(filename))
+    except (OSError, FileNotFoundError):
+        print(f'Error reading file: {filename}. Cannot load previous model')
         exit()
     return model
 
@@ -133,8 +132,8 @@ def loadmodel(filename):
 def loadweights(model, filename):
     try:
         model.load_weights(filename)
-    except (FileNotFoundError, IOError):
-        print('Error reading file: {0}. Cannot load previous weights'.format(filename))
+    except (OSError, FileNotFoundError):
+        print(f'Error reading file: {filename}. Cannot load previous weights')
         exit()
 
 

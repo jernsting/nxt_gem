@@ -4,10 +4,10 @@ graph reconstruction and visualization. Please copy the
 gem/data/karate.edgelist to the working directory
 """
 import os.path
+import pickle
 import unittest
 
 import networkx as nx
-import pickle
 import numpy as np
 
 from gem.embedding.gf import GraphFactorization
@@ -16,8 +16,6 @@ from gem.embedding.lap import LaplacianEigenmaps
 from gem.embedding.lle import LocallyLinearEmbedding
 from gem.embedding.node2vec import node2vec
 from gem.embedding.sdne import SDNE
-
-
 from tests.fit_model import fit_model
 from tests.utils import read_gpickle
 

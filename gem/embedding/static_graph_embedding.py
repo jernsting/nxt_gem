@@ -1,4 +1,5 @@
-from abc import ABCMeta, ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
+
 import numpy as np
 
 
@@ -13,10 +14,10 @@ class StaticGraphEmbedding(ABC):
         self._X = None
         self.hyper_params.update(kwargs)
         for key in self.hyper_params.keys():
-            self.__setattr__('_%s' % key, self.hyper_params[key])
+            self.__setattr__(f'_{key}', self.hyper_params[key])
         for dictionary in args:
             for key in dictionary:
-                self.__setattr__('_%s' % key, dictionary[key])
+                self.__setattr__(f'_{key}', dictionary[key])
 
     def get_method_name(self):
         """ Returns the name for the embedding method
@@ -33,7 +34,7 @@ class StaticGraphEmbedding(ABC):
             A summary string of the method
         """
 
-        return '%s_%d' % (self._method_name, self._d)
+        return f'{self._method_name}_{self._d}'
 
     def get_embedding(self):
         """ Returns the learnt embedding

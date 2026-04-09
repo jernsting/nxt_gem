@@ -1,4 +1,3 @@
-import numpy as np
 
 precision_pos = [2, 10, 100, 200, 300, 500, 1000]
 

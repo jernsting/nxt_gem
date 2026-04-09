@@ -1,9 +1,10 @@
-import pickle
-import numpy as np
-import networkx as nx
-import random
 import itertools
+import pickle
+import random
 import time
+
+import networkx as nx
+import numpy as np
 
 
 def transform_DiGraph_to_adj(di_graph):
@@ -35,8 +36,7 @@ def get_lcc(di_graph):
 
 
 def print_graph_stats(G):
-    print('# of nodes: %d, # of edges: %d' % (len(G.nodes),
-                                              len(G.edges)))
+    print(f'# of nodes: {len(G.nodes)}, # of edges: {len(G.edges)}')
 
 
 def sample_graph(di_graph, n_sampled_nodes=None):
@@ -51,7 +51,7 @@ def sample_graph(di_graph, n_sampled_nodes=None):
                 v_i = node_l_inv[st]
                 v_j = node_l_inv[ed]
                 sampled_graph.add_edge(v_i, v_j, weight=w)
-            except:
+            except Exception:
                 continue
         return sampled_graph, node_l
     else:
@@ -73,7 +73,7 @@ def randwalk_DiGraph_to_adj(di_graph, node_frac=0.1,
                 cur_neighbors = di_graph.neighbors(cur_node)
                 try:
                     neighbor_node = np.random.choice(cur_neighbors)
-                except:
+                except Exception:
                     continue
                 try:
                     adj[cur_node, neighbor_node] = di_graph.get_edge_data(
@@ -88,7 +88,7 @@ def randwalk_DiGraph_to_adj(di_graph, node_frac=0.1,
                     adj[cur_node, neighbor_node] = 1
                     adj[neighbor_node, cur_node] = 1
                 cur_node = neighbor_node
-    print('Time taken for random walk  on {0} nodes = {1}'.format(n, time.time() - t0))
+    print(f'Time taken for random walk  on {n} nodes = {time.time() - t0}')
     return adj
 
 
@@ -121,27 +121,26 @@ def addNodeAnomalies(di_graphs, p, k):
         di_graphs[t].add_edges_from(
             itertools.product(range(n_nodes), list(anomalous_nodes))
         )
-        print('Nodes: %d, Edges: %d' % (len(di_graphs[t].nodes),
-                                        len(di_graphs[t].edges)))
+        print(f'Nodes: {len(di_graphs[t].nodes)}, Edges: {len(di_graphs[t].edges)}' )
     return anomaly_time_steps
 
 
 def saveGraphToEdgeListTxt(graph, file_name):
     with open(file_name, 'w') as f:
-        f.write('%d\n' % len(graph.nodes))
-        f.write('%d\n' % len(graph.edges))
+        f.write(f'{len(graph.nodes)}\n')
+        f.write(f'{len(graph.edges)}\n')
         for i, j, w in graph.edges(data='weight', default=1):
-            f.write('%d %d %f\n' % (i, j, w))
+            f.write(f'{i} {j} {w}\n')
 
 
 def saveGraphToEdgeListTxtn2v(graph, file_name):
     with open(file_name, 'w') as f:
         for i, j, w in graph.edges(data='weight', default=1):
-            f.write('%d %d %f\n' % (i, j, w))
+            f.write(f'{i} {j} {w}\n')
 
 
 def loadGraphFromEdgeListTxt(file_name, directed=True):
-    with open(file_name, 'r') as f:
+    with open(file_name) as f:
         # n_nodes = f.readline()
         # f.readline() # Discard the number of edges
         if directed:
@@ -159,7 +158,7 @@ def loadGraphFromEdgeListTxt(file_name, directed=True):
 
 
 def loadEmbedding(file_name):
-    with open(file_name, 'r') as f:
+    with open(file_name) as f:
         n, d = f.readline().strip().split()
         X = np.zeros((int(n), int(d)))
         for line in f:
@@ -194,8 +193,8 @@ def saveRealGraphSeries(G, file_prefix='graphs/day_'):
 
 
 def loadDynamicSBmGraph(file_perfix, length):
-    graph_files = ['%s_%d_graph.gpickle' % (file_perfix, i) for i in range(length)]
-    info_files = ['%s_%d_node.pkl' % (file_perfix, i) for i in range(length)]
+    graph_files = [f'{file_perfix}_{i}_graph.gpickle' for i in range(length)]
+    info_files = [f'{file_perfix}_{i}_node.pkl' for i in range(length)]
 
     graphs = [nx.read_gpickle(graph_file) for graph_file in graph_files]
 
@@ -212,8 +211,8 @@ def loadDynamicSBmGraph(file_perfix, length):
 
 def saveDynamicSBmGraph(file_perfix, dynamic_graphs):
     length = len(dynamic_graphs)
-    graph_files = ['%s_%d_graph.gpickle' % (file_perfix, i) for i in range(length)]
-    info_files = ['%s_%d_node.pkl' % (file_perfix, i) for i in range(length)]
+    graph_files = [f'{file_perfix}_{i}_graph.gpickle' for i in range(length)]
+    info_files = [f'{file_perfix}_{i}_node.pkl' for i in range(length)]
 
     for i in range(length):
         # save graph

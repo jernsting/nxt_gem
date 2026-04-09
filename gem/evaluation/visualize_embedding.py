@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 from sklearn.manifold import TSNE
-from gem.utils import plot_util
 
 
 def plot_embedding2D(node_pos, node_colors=None, di_graph=None, labels=None):

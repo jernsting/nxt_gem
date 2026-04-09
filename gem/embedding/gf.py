@@ -1,8 +1,8 @@
 import os
 import sys
-import numpy as np
 from subprocess import call
-import matplotlib.pyplot as plt
+
+import numpy as np
 
 from gem.embedding.static_graph_embedding import StaticGraphEmbedding
 from gem.utils import graph_util
@@ -49,7 +49,7 @@ class GraphFactorization(StaticGraphEmbedding):
             max_iter: max iterations in sgd
             print_step: #iterations to log the prgoress (step%print_step)
         """
-        super(GraphFactorization, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _use_c_implementation(self, graph=None):
         if sys.platform[0] == "w":  # pragma: no cover
@@ -57,18 +57,18 @@ class GraphFactorization(StaticGraphEmbedding):
         else:
             args = ["gem/c_exe/gf"]
         os.makedirs('gem/intermediate', exist_ok=True)
-        graph_filename = 'gem/intermediate/%s_gf.graph' % self._data_set
-        emb_filename = 'gem/intermediate/%s_%d_gf.emb' % (self._data_set, self._d)
+        graph_filename = f'gem/intermediate/{self._data_set}_gf.graph'
+        emb_filename = f'gem/intermediate/{self._data_set}_{self._d}_gf.emb'
         graph_util.saveGraphToEdgeListTxt(graph, graph_filename)
         args.append(graph_filename)
         args.append(emb_filename)
         args.append("1")  # Verbose
         args.append("1")  # Weighted
-        args.append("%d" % self._d)
-        args.append("%f" % self._eta)
-        args.append("%f" % self._regu)
-        args.append("%d" % self._max_iter)
-        args.append("%d" % self._print_step)
+        args.append(f"{self._d}")
+        args.append(f"{self._eta}")
+        args.append(f"{self._regu}")
+        args.append(f"{self._max_iter}")
+        args.append(f"{self._print_step}")
         call(args)
         # this should be tested in future
         try:  # pragma: no cover

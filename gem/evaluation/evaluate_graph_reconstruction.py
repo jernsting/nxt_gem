@@ -1,8 +1,8 @@
-import pickle
-from gem.evaluation import metrics
-from gem.utils import evaluation_util, graph_util
 import networkx as nx
 import numpy as np
+
+from gem.evaluation import metrics
+from gem.utils import evaluation_util
 
 
 def evaluateStaticGraphReconstruction(digraph, graph_embedding,

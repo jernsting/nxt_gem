@@ -1,14 +1,21 @@
-import numpy as np
 import networkx as nx
-
+import numpy as np
+from tensorflow.keras import backend as KBack
 from tensorflow.keras.layers import Input, Lambda, Subtract
 from tensorflow.keras.models import Model, model_from_json
 from tensorflow.keras.optimizers import SGD
-from tensorflow.keras import backend as KBack
 
+from gem.embedding.sdne_utils import (
+    batch_generator_sdne,
+    get_autoencoder,
+    get_decoder,
+    get_encoder,
+    graphify,
+    model_batch_predictor,
+    savemodel,
+    saveweights,
+)
 from gem.embedding.static_graph_embedding import StaticGraphEmbedding
-from gem.embedding.sdne_utils import get_encoder, get_decoder, get_autoencoder, batch_generator_sdne, \
-    model_batch_predictor, saveweights, savemodel, graphify
 
 
 class SDNE(StaticGraphEmbedding):
@@ -41,7 +48,7 @@ class SDNE(StaticGraphEmbedding):
             modelfile: Files containing previous encoder and decoder models
             weightfile: Files containing previous encoder and decoder weights
         """
-        super(SDNE, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.learned = False
 
     def learn_embedding(self, graph=None,
@@ -195,12 +202,12 @@ class SDNE(StaticGraphEmbedding):
                     open('decoder_model_' + filesuffix + '.json').read()
                 )
             except FileNotFoundError:
-                print('Error reading file: {0}. Cannot load previous model'.format('decoder_model_'+filesuffix+'.json'))
+                print(f'Error reading file: {"decoder_model_"+filesuffix+".json"}. Cannot load previous model')
                 exit()
             try:
                 decoder.load_weights('decoder_weights_' + filesuffix + '.hdf5')
             except (FileNotFoundError, ReferenceError):
-                print('Error reading file: {0}. Cannot load previous weights'.format('decoder_weights_'+filesuffix+'.hdf5'))
+                print(f'Error reading file: {"decoder_weights_"+filesuffix+".hdf5"}. Cannot load previous weights')
                 exit()
             if node_l is not None:
                 return decoder.predict(embed, batch_size=self._n_batch)[:, node_l]
