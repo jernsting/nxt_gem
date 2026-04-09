@@ -32,7 +32,7 @@ jobs:
         uv run ruff check . --select C90 --exit-zero
 
     - name: Run Tests (Optional but recommended)
-      run: uv run pytest --cov=./gem
+      run: uv run overage run -m pytest
 
     - name: Coveralls
       uses: coverallsapp/github-action@v2
