@@ -7,20 +7,19 @@ class StaticGraphEmbedding(ABC):
     __metaclass__ = ABCMeta
 
     def __init__(self, *args, **kwargs):
-        """Initialize the Embedding class
-        """
+        """Initialize the Embedding class"""
         self._method_name = None
         self._d = None
         self._X = None
         self.hyper_params.update(kwargs)
         for key in self.hyper_params.keys():
-            self.__setattr__(f'_{key}', self.hyper_params[key])
+            self.__setattr__(f"_{key}", self.hyper_params[key])
         for dictionary in args:
             for key in dictionary:
-                self.__setattr__(f'_{key}', dictionary[key])
+                self.__setattr__(f"_{key}", dictionary[key])
 
     def get_method_name(self):
-        """ Returns the name for the embedding method
+        """Returns the name for the embedding method
 
         Return:
             The name of embedding
@@ -28,16 +27,16 @@ class StaticGraphEmbedding(ABC):
         return self._method_name
 
     def get_method_summary(self):
-        """ Returns the summary for the embedding include method name and paramater setting
+        """Returns the summary for the embedding include method name and paramater setting
 
         Return:
             A summary string of the method
         """
 
-        return f'{self._method_name}_{self._d}'
+        return f"{self._method_name}_{self._d}"
 
     def get_embedding(self):
-        """ Returns the learnt embedding
+        """Returns the learnt embedding
 
         Return:
             A numpy array of size #nodes * d

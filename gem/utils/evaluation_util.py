@@ -18,11 +18,13 @@ def get_random_edge_pairs(node_num, sample_ratio=0.01, is_undirected=True):
     return list(current_sets)
 
 
-def get_edge_list_from_adj_mtrx(adj, threshold=0.0, is_undirected=True, edge_pairs=None):
+def get_edge_list_from_adj_mtrx(
+    adj, threshold=0.0, is_undirected=True, edge_pairs=None
+):
     result = []
     node_num = adj.shape[0]
     if edge_pairs:
-        for (st, ed) in edge_pairs:
+        for st, ed in edge_pairs:
             if adj[st, ed] >= threshold:
                 result.append((st, ed, adj[st, ed]))
     else:
@@ -40,7 +42,7 @@ def get_edge_list_from_adj_mtrx(adj, threshold=0.0, is_undirected=True, edge_pai
 def split_di_graph_to_train_test(di_graph, train_ratio, is_undirected=True):
     train_digraph = di_graph.copy()
     test_digraph = di_graph.copy()
-    for (st, ed, w) in list(di_graph.edges(data='weight', default=1)):
+    for st, ed, w in list(di_graph.edges(data="weight", default=1)):
         if is_undirected and st >= ed:
             continue
         if np.random.uniform() <= train_ratio:
@@ -50,5 +52,5 @@ def split_di_graph_to_train_test(di_graph, train_ratio, is_undirected=True):
         else:
             train_digraph.remove_edge(st, ed)
             if is_undirected:
-                train_digraph.remove_edge(ed, st) 
+                train_digraph.remove_edge(ed, st)
     return train_digraph, test_digraph

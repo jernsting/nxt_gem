@@ -8,19 +8,25 @@ def get_node_color(node_community):
     return node_colors
 
 
-def plot(x_s, y_s, fig_n, x_lab, y_lab, file_save_path, title, legendLabels=None, show=False):
-    plt.rcParams.update({'font.size': 16, 'font.weight': 'bold'})
-    markers = ['o', '*', 'v', 'D', '<' , 's', '+', '^', '>']
-    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+def plot(
+    x_s, y_s, fig_n, x_lab, y_lab, file_save_path, title, legendLabels=None, show=False
+):
+    plt.rcParams.update({"font.size": 16, "font.weight": "bold"})
+    markers = ["o", "*", "v", "D", "<", "s", "+", "^", ">"]
+    colors = ["b", "g", "r", "c", "m", "y", "k"]
     series = []
     plt.figure(fig_n)
     for i in range(len(x_s)):
         x = x_s[i]
         y = y_s[i]
-        series.append(plt.plot(x, y, color=colors[i], linewidth=2, marker=markers[i], markersize=8))
-        plt.xlabel(x_lab, fontsize=16, fontweight='bold')
-        plt.ylabel(y_lab, fontsize=16, fontweight='bold')
-        plt.title(title, fontsize=16, fontweight='bold')
+        series.append(
+            plt.plot(
+                x, y, color=colors[i], linewidth=2, marker=markers[i], markersize=8
+            )
+        )
+        plt.xlabel(x_lab, fontsize=16, fontweight="bold")
+        plt.ylabel(y_lab, fontsize=16, fontweight="bold")
+        plt.title(title, fontsize=16, fontweight="bold")
     if legendLabels:
         plt.legend([s[0] for s in series], legendLabels)
     plt.savefig(file_save_path)
@@ -28,23 +34,46 @@ def plot(x_s, y_s, fig_n, x_lab, y_lab, file_save_path, title, legendLabels=None
         plt.show()
 
 
-def plot_ts(ts_df, plot_title, eventDates, eventLabels=None, save_file_name=None, xLabel=None, yLabel=None, show=False):
-    ax = ts_df.plot(title=plot_title, marker='*', markerfacecolor='red', markersize=10, linestyle='solid')
-    colors = ['r', 'g', 'c', 'm', 'y', 'b', 'k']
+def plot_ts(
+    ts_df,
+    plot_title,
+    eventDates,
+    eventLabels=None,
+    save_file_name=None,
+    xLabel=None,
+    yLabel=None,
+    show=False,
+):
+    ax = ts_df.plot(
+        title=plot_title,
+        marker="*",
+        markerfacecolor="red",
+        markersize=10,
+        linestyle="solid",
+    )
+    colors = ["r", "g", "c", "m", "y", "b", "k"]
     if not eventLabels:
         for eventDate in eventDates:
-            ax.axvline(eventDate, color='r', linestyle='--', lw=2)  # Show event as a red vertical line
+            ax.axvline(
+                eventDate, color="r", linestyle="--", lw=2
+            )  # Show event as a red vertical line
     else:
         for idx in range(len(eventDates)):
             # Show event as a red vertical line
-            ax.axvline(eventDates[idx], color=colors[idx], linestyle='--', lw=2, label=eventLabels[idx])
+            ax.axvline(
+                eventDates[idx],
+                color=colors[idx],
+                linestyle="--",
+                lw=2,
+                label=eventLabels[idx],
+            )
             ax.legend()
     if xLabel:
-        ax.set_xlabel(xLabel, fontweight='bold')
+        ax.set_xlabel(xLabel, fontweight="bold")
     if yLabel:
-        ax.set_ylabel(yLabel, fontweight='bold')
+        ax.set_ylabel(yLabel, fontweight="bold")
     fig = ax.get_figure()
     if save_file_name:
-        fig.savefig(save_file_name, bbox_inches='tight')
+        fig.savefig(save_file_name, bbox_inches="tight")
     if show:
         fig.show()

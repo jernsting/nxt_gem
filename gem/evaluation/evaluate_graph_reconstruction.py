@@ -5,17 +5,21 @@ from gem.evaluation import metrics
 from gem.utils import evaluation_util
 
 
-def evaluateStaticGraphReconstruction(digraph, graph_embedding,
-                                      X_stat, node_l=None, file_suffix=None,
-                                      sample_ratio_e=None, is_undirected=True,
-                                      is_weighted=False):
+def evaluateStaticGraphReconstruction(
+    digraph,
+    graph_embedding,
+    X_stat,
+    node_l=None,
+    file_suffix=None,
+    sample_ratio_e=None,
+    is_undirected=True,
+    is_weighted=False,
+):
     node_num = len(digraph.nodes)
     # evaluation
     if sample_ratio_e:
         eval_edge_pairs = evaluation_util.get_random_edge_pairs(
-            node_num,
-            sample_ratio_e,
-            is_undirected
+            node_num, sample_ratio_e, is_undirected
         )
     else:
         eval_edge_pairs = None
@@ -23,14 +27,10 @@ def evaluateStaticGraphReconstruction(digraph, graph_embedding,
         estimated_adj = graph_embedding.get_reconstructed_adj(X_stat, node_l)
     else:
         estimated_adj = graph_embedding.get_reconstructed_adj(
-            X_stat,
-            file_suffix,
-            node_l
+            X_stat, file_suffix, node_l
         )
     predicted_edge_list = evaluation_util.get_edge_list_from_adj_mtrx(
-        estimated_adj,
-        is_undirected=is_undirected,
-        edge_pairs=eval_edge_pairs
+        estimated_adj, is_undirected=is_undirected, edge_pairs=eval_edge_pairs
     )
     MAP = metrics.computeMAP(predicted_edge_list, digraph, is_undirected=is_undirected)
     prec_curv, _ = metrics.computePrecisionCurve(predicted_edge_list, digraph)

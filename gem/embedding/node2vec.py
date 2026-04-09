@@ -8,12 +8,10 @@ from gem.utils import graph_util
 
 
 class node2vec(StaticGraphEmbedding):
-    hyper_params = {
-        'method_name': 'node2vec_rw'
-    }
+    hyper_params = {"method_name": "node2vec_rw"}
 
     def __init__(self, *args, **kwargs):
-        """ Initialize the node2vec class
+        """Initialize the node2vec class
 
         Args:
             d: dimension of the embedding
@@ -26,14 +24,13 @@ class node2vec(StaticGraphEmbedding):
         """
         super().__init__(*args, **kwargs)
 
-    def learn_embedding(self, graph=None,
-                        is_weighted=False, no_python=False):
+    def learn_embedding(self, graph=None, is_weighted=False, no_python=False):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        executable = os.path.abspath(os.path.join(current_dir, '../c_exe/node2vec'))
+        executable = os.path.abspath(os.path.join(current_dir, "../c_exe/node2vec"))
         args = [executable]
         if not graph:
-            raise ValueError('graph needed')
-        graph_util.saveGraphToEdgeListTxtn2v(graph, 'tempGraph.graph')
+            raise ValueError("graph needed")
+        graph_util.saveGraphToEdgeListTxtn2v(graph, "tempGraph.graph")
         args.append("-i:tempGraph.graph")
         args.append("-o:tempGraph.emb")
         args.append(f"-d:{self._d}")
@@ -50,9 +47,11 @@ class node2vec(StaticGraphEmbedding):
             call(args)
         except Exception as e:  # pragma: no cover
             print(str(e))
-            raise FileNotFoundError('./node2vec not found. Please compile snap, place node2vec in the system path '
-                                    'and grant executable permission')
-        self._X = graph_util.loadEmbedding('tempGraph.emb')
+            raise FileNotFoundError(
+                "./node2vec not found. Please compile snap, place node2vec in the system path "
+                "and grant executable permission"
+            )
+        self._X = graph_util.loadEmbedding("tempGraph.emb")
         return self._X
 
     def get_edge_weight(self, i, j):
