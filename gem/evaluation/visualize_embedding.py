@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 from sklearn.manifold import TSNE
-from gem.utils import plot_util
 
 
 def plot_embedding2D(node_pos, node_colors=None, di_graph=None, labels=None):
@@ -20,12 +19,26 @@ def plot_embedding2D(node_pos, node_colors=None, di_graph=None, labels=None):
         for i in range(node_num):
             pos[i] = node_pos[i, :]
         if node_colors is not None:
-            nx.draw_networkx_nodes(di_graph, pos,
-                                   node_color=node_colors,
-                                   width=0.1, node_size=100,
-                                   arrows=False, alpha=0.8,
-                                   font_size=5, labels=labels)
+            nx.draw_networkx_nodes(
+                di_graph,
+                pos,
+                node_color=node_colors,
+                width=0.1,
+                node_size=100,
+                arrows=False,
+                alpha=0.8,
+                font_size=5,
+                labels=labels,
+            )
         else:
-            nx.draw_networkx(di_graph, pos, node_color=node_colors,
-                             width=0.1, node_size=300, arrows=False,
-                             alpha=0.8, font_size=12, labels=labels)
+            nx.draw_networkx(
+                di_graph,
+                pos,
+                node_color=node_colors,
+                width=0.1,
+                node_size=300,
+                arrows=False,
+                alpha=0.8,
+                font_size=12,
+                labels=labels,
+            )

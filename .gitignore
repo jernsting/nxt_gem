@@ -119,3 +119,5 @@ gem/data/*
 # keras models
 *.json
 
+.venv
+gem/_version.py

@@ -9,7 +9,6 @@ from gem.embedding.sdne import SDNE
 
 
 class EmbeddingsTest(unittest.TestCase):
-
     def test_hope(self):
         model = HOPE()
         self._run(model)
@@ -40,7 +39,7 @@ class EmbeddingsTest(unittest.TestCase):
         except ValueError:
             pass
         # check method name
-        self.assertEqual(model.hyper_params['method_name'], model.get_method_name())
+        self.assertEqual(model.hyper_params["method_name"], model.get_method_name())
         # check unlearned prediction
         try:
             model.get_embedding()

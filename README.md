@@ -54,19 +54,24 @@ To run SDNE, GEM requires Theano >= 0.9.0 and tensorflow.
 In case of Python 3, make sure it was compiled with `./configure --enable-shared`, and that you have `/usr/local/bin/python` in your `LD_LIBRARY_PATH`.
 
 ## Install
-The package uses setuptools, which is a common way of installing python modules. To install in your home directory, use:
+We recommend using [uv](https://docs.astral.sh/uv/) for fast, reliable dependency management.
 ```bash
-python setup.py install --user
+uv pip install .
 ```
 
-To install for all users on Unix/Linux:
-```bash 
-sudo python setup.py install
+If you don't use uv but want to install nxt_gem, please just run
+```bash
+pip install .
 ```
 
-Or installing via pipwith git: 
+Or installing via pip with git: 
 ```bash 
 pip install git+https://github.com/jernsting/nxt_gem.git
+```
+
+and using uv similar:
+```bash
+uv pip install git+https://github.com/jernsting/nxt_gem.git
 ```
 
 ## Usage

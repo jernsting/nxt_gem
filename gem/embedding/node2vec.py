@@ -1,17 +1,17 @@
 import os
-import numpy as np
 from subprocess import call
+
+import numpy as np
+
 from gem.embedding.static_graph_embedding import StaticGraphEmbedding
 from gem.utils import graph_util
 
 
 class node2vec(StaticGraphEmbedding):
-    hyper_params = {
-        'method_name': 'node2vec_rw'
-    }
+    hyper_params = {"method_name": "node2vec_rw"}
 
     def __init__(self, *args, **kwargs):
-        """ Initialize the node2vec class
+        """Initialize the node2vec class
 
         Args:
             d: dimension of the embedding
@@ -22,25 +22,24 @@ class node2vec(StaticGraphEmbedding):
             ret_p: return weight
             inout_p: inout weight
         """
-        super(node2vec, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def learn_embedding(self, graph=None,
-                        is_weighted=False, no_python=False):
+    def learn_embedding(self, graph=None, is_weighted=False, no_python=False):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        executable = os.path.abspath(os.path.join(current_dir, '../c_exe/node2vec'))
+        executable = os.path.abspath(os.path.join(current_dir, "../c_exe/node2vec"))
         args = [executable]
         if not graph:
-            raise ValueError('graph needed')
-        graph_util.saveGraphToEdgeListTxtn2v(graph, 'tempGraph.graph')
+            raise ValueError("graph needed")
+        graph_util.saveGraphToEdgeListTxtn2v(graph, "tempGraph.graph")
         args.append("-i:tempGraph.graph")
         args.append("-o:tempGraph.emb")
-        args.append("-d:%d" % self._d)
-        args.append("-l:%d" % self._walk_len)
-        args.append("-r:%d" % self._num_walks)
-        args.append("-k:%d" % self._con_size)
-        args.append("-e:%d" % self._max_iter)
-        args.append("-p:%f" % self._ret_p)
-        args.append("-q:%f" % self._inout_p)
+        args.append(f"-d:{self._d}")
+        args.append(f"-l:{self._walk_len}")
+        args.append(f"-r:{self._num_walks}")
+        args.append(f"-k:{self._con_size}")
+        args.append(f"-e:{self._max_iter}")
+        args.append(f"-p:{self._ret_p}")
+        args.append(f"-q:{self._inout_p}")
         args.append("-v")
         args.append("-dr")
         args.append("-w")
@@ -48,9 +47,11 @@ class node2vec(StaticGraphEmbedding):
             call(args)
         except Exception as e:  # pragma: no cover
             print(str(e))
-            raise FileNotFoundError('./node2vec not found. Please compile snap, place node2vec in the system path '
-                                    'and grant executable permission')
-        self._X = graph_util.loadEmbedding('tempGraph.emb')
+            raise FileNotFoundError(
+                "./node2vec not found. Please compile snap, place node2vec in the system path "
+                "and grant executable permission"
+            )
+        self._X = graph_util.loadEmbedding("tempGraph.emb")
         return self._X
 
     def get_edge_weight(self, i, j):

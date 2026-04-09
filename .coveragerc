@@ -1,0 +1,8 @@
+[report]
+# Ignore source code that cannot be found
+ignore_errors = True
+
+[run]
+# Specifically omit TensorFlow/Keras autograph temporary files
+omit =
+    **/__autograph_generated_file*.py

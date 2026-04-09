@@ -1,8 +1,7 @@
 import numpy as np
-
-from tensorflow.keras.layers import Input, Dense
-from tensorflow.keras.models import Model, model_from_json
 import tensorflow.keras.regularizers as Reg
+from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.models import Model, model_from_json
 
 
 def model_batch_predictor(model, X, batch_size):
@@ -10,17 +9,16 @@ def model_batch_predictor(model, X, batch_size):
     counter = 0
     pred = None
     while counter < n_samples // batch_size:
-        _, curr_pred = \
-            model.predict(X[batch_size * counter:batch_size * (counter + 1),
-                          :].toarray())
+        _, curr_pred = model.predict(
+            X[batch_size * counter : batch_size * (counter + 1), :].toarray()
+        )
         if counter:
             pred = np.vstack((pred, curr_pred))
         else:
             pred = curr_pred
         counter += 1
     if n_samples % batch_size != 0:
-        _, curr_pred = \
-            model.predict(X[batch_size * counter:, :].toarray())
+        _, curr_pred = model.predict(X[batch_size * counter :, :].toarray())
         if counter:
             pred = np.vstack((pred, curr_pred))
         else:
@@ -36,8 +34,7 @@ def batch_generator_sdne(X, beta, batch_size, shuffle):
     if shuffle:
         np.random.shuffle(sample_index)
     while True:
-        batch_index = \
-            sample_index[batch_size * counter:batch_size * (counter + 1)]
+        batch_index = sample_index[batch_size * counter : batch_size * (counter + 1)]
         X_batch_v_i = X[row_indices[batch_index], :].toarray()
         X_batch_v_j = X[col_indices[batch_index], :].toarray()
         InData = np.append(X_batch_v_i, X_batch_v_j, axis=1)
@@ -67,31 +64,34 @@ def get_encoder(node_num, d, K, n_units, nu1, nu2, activation_fn):
     y = [None] * (K + 1)
     y[0] = x  # y[0] is assigned the input
     for i in range(K - 1):
-        y[i + 1] = Dense(n_units[i],
-                         activation=activation_fn,
-                         kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2))(y[i])
-    y[K] = Dense(d,
-                 activation=activation_fn,
-                 kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2))(y[K - 1])
+        y[i + 1] = Dense(
+            n_units[i],
+            activation=activation_fn,
+            kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2),
+        )(y[i])
+    y[K] = Dense(
+        d, activation=activation_fn, kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2)
+    )(y[K - 1])
     # Encoder model
     encoder = Model(inputs=x, outputs=y[K])
     return encoder
 
 
-def get_decoder(node_num, d, K,
-                n_units, nu1, nu2,
-                activation_fn):
+def get_decoder(node_num, d, K, n_units, nu1, nu2, activation_fn):
     # Input
     y = Input(shape=(d,))
     # Decoder layers
     y_hat = [None] * (K + 1)
     y_hat[K] = y
     for i in range(K - 1, 0, -1):
-        y_hat[i] = Dense(n_units[i - 1],
-                         activation=activation_fn,
-                         kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2))(y_hat[i + 1])
-    y_hat[0] = Dense(node_num, activation=activation_fn,
-                     kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2))(y_hat[1])
+        y_hat[i] = Dense(
+            n_units[i - 1],
+            activation=activation_fn,
+            kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2),
+        )(y_hat[i + 1])
+    y_hat[0] = Dense(
+        node_num, activation=activation_fn, kernel_regularizer=Reg.l1_l2(l1=nu1, l2=nu2)
+    )(y_hat[1])
     # Output
     x_hat = y_hat[0]  # decoder's output is also the actual output
     # Decoder Model
@@ -124,8 +124,8 @@ def loadmodel(filename):
     model = None
     try:
         model = model_from_json(open(filename).read())
-    except (FileNotFoundError, IOError):
-        print('Error reading file: {0}. Cannot load previous model'.format(filename))
+    except (OSError, FileNotFoundError):
+        print(f"Error reading file: {filename}. Cannot load previous model")
         exit()
     return model
 
@@ -133,14 +133,14 @@ def loadmodel(filename):
 def loadweights(model, filename):
     try:
         model.load_weights(filename)
-    except (FileNotFoundError, IOError):
-        print('Error reading file: {0}. Cannot load previous weights'.format(filename))
+    except (OSError, FileNotFoundError):
+        print(f"Error reading file: {filename}. Cannot load previous weights")
         exit()
 
 
 def savemodel(model, filename):
     json_string = model.to_json()
-    open(filename, 'w').write(json_string)
+    open(filename, "w").write(json_string)
 
 
 def saveweights(model, filename):

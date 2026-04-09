@@ -1,15 +1,14 @@
 import os
 import sys
-import numpy as np
 from subprocess import call
-import matplotlib.pyplot as plt
+
+import numpy as np
 
 from gem.embedding.static_graph_embedding import StaticGraphEmbedding
 from gem.utils import graph_util
 
 
 class GraphFactorization(StaticGraphEmbedding):
-
     """`Graph Factorization`_.
     Graph Factorization factorizes the adjacency matrix with regularization.
 
@@ -35,13 +34,11 @@ class GraphFactorization(StaticGraphEmbedding):
     .. _Graph Factorization:
         https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40839.pdf
     """
-    hyper_params = {
-        'print_step': 10000,
-        'method_name': 'graph_factor_sgd'
-    }
+
+    hyper_params = {"print_step": 10000, "method_name": "graph_factor_sgd"}
 
     def __init__(self, *args, **kwargs):
-        """ Initialize the GraphFactorization class
+        """Initialize the GraphFactorization class
         Args:
             d: dimension of the embedding
             eta: learning rate of sgd
@@ -49,26 +46,26 @@ class GraphFactorization(StaticGraphEmbedding):
             max_iter: max iterations in sgd
             print_step: #iterations to log the prgoress (step%print_step)
         """
-        super(GraphFactorization, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _use_c_implementation(self, graph=None):
         if sys.platform[0] == "w":  # pragma: no cover
             args = ["gem/c_exe/gf.exe"]
         else:
             args = ["gem/c_exe/gf"]
-        os.makedirs('gem/intermediate', exist_ok=True)
-        graph_filename = 'gem/intermediate/%s_gf.graph' % self._data_set
-        emb_filename = 'gem/intermediate/%s_%d_gf.emb' % (self._data_set, self._d)
+        os.makedirs("gem/intermediate", exist_ok=True)
+        graph_filename = f"gem/intermediate/{self._data_set}_gf.graph"
+        emb_filename = f"gem/intermediate/{self._data_set}_{self._d}_gf.emb"
         graph_util.saveGraphToEdgeListTxt(graph, graph_filename)
         args.append(graph_filename)
         args.append(emb_filename)
         args.append("1")  # Verbose
         args.append("1")  # Weighted
-        args.append("%d" % self._d)
-        args.append("%f" % self._eta)
-        args.append("%f" % self._regu)
-        args.append("%d" % self._max_iter)
-        args.append("%d" % self._print_step)
+        args.append(f"{self._d}")
+        args.append(f"{self._eta}")
+        args.append(f"{self._regu}")
+        args.append(f"{self._max_iter}")
+        args.append(f"{self._print_step}")
         call(args)
         # this should be tested in future
         try:  # pragma: no cover
@@ -78,20 +75,21 @@ class GraphFactorization(StaticGraphEmbedding):
         os.remove(emb_filename)
         return self._X
 
-    def learn_embedding(self, graph=None,
-                        is_weighted=False, no_python=True):
+    def learn_embedding(self, graph=None, is_weighted=False, no_python=True):
         if not graph:
-            raise ValueError('graph needed')
+            raise ValueError("graph needed")
         if no_python:
             try:
                 self._use_c_implementation(graph)
             except FileNotFoundError:
-                print('./gf not found. Reverting to Python implementation. Please compile gf, place node2vec in '
-                      'the path and grant executable permission')
+                print(
+                    "./gf not found. Reverting to Python implementation. Please compile gf, place node2vec in "
+                    "the path and grant executable permission"
+                )
         self._node_num = len(graph.nodes)
         self._X = 0.01 * np.random.randn(self._node_num, self._d)
         for _ in range(self._max_iter):
-            for i, j, w in graph.edges(data='weight', default=1):
+            for i, j, w in graph.edges(data="weight", default=1):
                 if j <= i:
                     continue
                 term1 = -(w - np.dot(self._X[i, :], self._X[j, :])) * self._X[j, :]

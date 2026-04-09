@@ -1,0 +1,72 @@
+[project]
+name = "nxt-gem"
+dynamic = ["version"]
+description = "nxt_gem: A Python module for Graph Embedding Methods"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Jan Ernsting", email = "j.ernsting@uni-muenster.de" }
+]
+license = { text = "MIT" }
+keywords = [
+    "graph embedding",
+    "network analysis",
+    "network embedding",
+    "data mining",
+    "machine learning",
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Intended Audience :: Science/Research",
+]
+dependencies = [
+    "matplotlib>=2.0.0",
+    "networkx==3.3",
+    "numpy==1.24.2",
+    "pbr>=7.0.3",
+    "scikit-learn>=0.21.2",
+    "scipy>=0.19.0",
+    "tensorflow==2.11",
+    "theano>=0.9.0",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["gem"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/gem",
+]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "gem/_version.py"
+
+[tool.ruff]
+# Target version for the linter (matches your project)
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+# Enable Pyflakes (F) and pycodestyle (E) codes by default.
+# You can add more like "I" (isort) or "D" (pydocstyle).
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]  # as of now no line lenght check
+
+[tool.ruff.format]
+quote-style = "double"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.9",
+]

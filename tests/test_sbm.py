@@ -3,11 +3,12 @@ Run the graph embedding methods on Karate graph and evaluate them on
 graph reconstruction and visualization. Please copy the
 gem/data/karate.edgelist to the working directory
 """
+
 import os.path
+import pickle
 import unittest
 
 import networkx as nx
-import pickle
 import numpy as np
 
 from gem.embedding.gf import GraphFactorization
@@ -16,19 +17,16 @@ from gem.embedding.lap import LaplacianEigenmaps
 from gem.embedding.lle import LocallyLinearEmbedding
 from gem.embedding.node2vec import node2vec
 from gem.embedding.sdne import SDNE
-
-
 from tests.fit_model import fit_model
 from tests.utils import read_gpickle
 
 
 class SBMTest(unittest.TestCase):
-
     def setUp(self) -> None:
         # File that contains the edges. Format: source target
         # Optionally, you can add weights as third column: source target weight
         self.source_dir = os.path.dirname(os.path.abspath(__file__))
-        file_prefix = os.path.join(self.source_dir, 'data/sbm.gpickle')
+        file_prefix = os.path.join(self.source_dir, "data/sbm.gpickle")
 
         # Load graph
         G = read_gpickle(file_prefix)
@@ -41,11 +39,14 @@ class SBMTest(unittest.TestCase):
         G = H
         try:
             node_colors = pickle.load(
-                open(os.path.join(self.source_dir, 'data/sbm_node_labels.pickle'), 'rb')
+                open(os.path.join(self.source_dir, "data/sbm_node_labels.pickle"), "rb")
             )
         except UnicodeDecodeError:
             node_colors = pickle.load(
-                open(os.path.join(self.source_dir, 'data/sbm_node_labels.pickle'), 'rb'), encoding='latin1'
+                open(
+                    os.path.join(self.source_dir, "data/sbm_node_labels.pickle"), "rb"
+                ),
+                encoding="latin1",
             )
         node_colors_arr = [None] * node_colors.shape[0]
         for idx in range(node_colors.shape[0]):
@@ -55,41 +56,79 @@ class SBMTest(unittest.TestCase):
         self.G = G
 
     def test_GraphFactorization(self):
-        model = GraphFactorization(d=128, max_iter=1000, eta=1 * 10**-4, regu=1.0, data_set='sbm')
-        target = np.loadtxt(os.path.join(self.source_dir, 'smb_res/GraphFactorization.txt'))
+        model = GraphFactorization(
+            d=128, max_iter=1000, eta=1 * 10**-4, regu=1.0, data_set="sbm"
+        )
+        target = np.loadtxt(
+            os.path.join(self.source_dir, "smb_res/GraphFactorization.txt")
+        )
         self.internal_model_test(model, target)
 
     def test_HOPE(self):
         model = HOPE(d=256, beta=0.01)
-        target = np.loadtxt(os.path.join(self.source_dir, 'smb_res/HOPE.txt'))
+        target = np.loadtxt(os.path.join(self.source_dir, "smb_res/HOPE.txt"))
         self.internal_model_test(model, target)
 
     def test_LaplacianEigenmaps(self):
         model = LaplacianEigenmaps(d=128)
-        target = np.loadtxt(os.path.join(self.source_dir, 'smb_res/LaplacianEigenmaps.txt'))
+        target = np.loadtxt(
+            os.path.join(self.source_dir, "smb_res/LaplacianEigenmaps.txt")
+        )
         self.internal_model_test(model, target)
 
     def test_LocallyLinearEmbedding(self):
         model = LocallyLinearEmbedding(d=128)
-        target = np.loadtxt(os.path.join(self.source_dir, 'smb_res/LocallyLinearEmbedding.txt'))
+        target = np.loadtxt(
+            os.path.join(self.source_dir, "smb_res/LocallyLinearEmbedding.txt")
+        )
         self.internal_model_test(model, target)
 
     def test_node2vec(self):
-        model = node2vec(d=182, max_iter=1, walk_len=80, num_walks=10, con_size=10, ret_p=1, inout_p=1, data_set='sbm')
-        target = np.loadtxt(os.path.join(self.source_dir, 'smb_res/node2vec.txt'))
-        self.internal_model_test(model, target, delta=.1)
+        model = node2vec(
+            d=182,
+            max_iter=1,
+            walk_len=80,
+            num_walks=10,
+            con_size=10,
+            ret_p=1,
+            inout_p=1,
+            data_set="sbm",
+        )
+        target = np.loadtxt(os.path.join(self.source_dir, "smb_res/node2vec.txt"))
+        self.internal_model_test(model, target, delta=0.1)
 
     def test_SDNE(self):
-        model = SDNE(d=128, beta=5, alpha=1e-5, nu1=1e-6, nu2=1e-6, K=3, n_units=[500, 300, ], rho=0.3, n_iter=30,
-                     xeta=0.001, n_batch=500, modelfile=['enc_model.json', 'dec_model.json'],
-                     weightfile=['enc_weights.hdf5', 'dec_weights.hdf5'])
-        target = np.loadtxt(os.path.join(self.source_dir, 'smb_res/SDNE.txt'))
+        model = SDNE(
+            d=128,
+            beta=5,
+            alpha=1e-5,
+            nu1=1e-6,
+            nu2=1e-6,
+            K=3,
+            n_units=[
+                500,
+                300,
+            ],
+            rho=0.3,
+            n_iter=30,
+            xeta=0.001,
+            n_batch=500,
+            modelfile=["enc_model.json", "dec_model.json"],
+            weightfile=["enc_weights.hdf5", "dec_weights.hdf5"],
+        )
+        target = np.loadtxt(os.path.join(self.source_dir, "smb_res/SDNE.txt"))
         self.internal_model_test(model, target, delta=1)
 
-    def internal_model_test(self, model, target, verbose: bool = False, delta: float = 1e-3):
+    def internal_model_test(
+        self, model, target, verbose: bool = False, delta: float = 1e-3
+    ):
         MAP, prec_curv, err, err_baseline = fit_model(self.G, model)
         # ---------------------------------------------------------------------------------
         if verbose:
-            print(("\tMAP: {} \t preccision curve: {}\n\n\n\n" + '-' * 100).format(MAP, prec_curv[:5]))
+            print(
+                ("\tMAP: {} \t preccision curve: {}\n\n\n\n" + "-" * 100).format(
+                    MAP, prec_curv[:5]
+                )
+            )
 
         self.assertTrue(abs(np.mean(target - model.get_embedding())) < delta)

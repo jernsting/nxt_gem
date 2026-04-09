@@ -6,26 +6,23 @@ from gem.embedding.static_graph_embedding import StaticGraphEmbedding
 
 
 class LaplacianEigenmaps(StaticGraphEmbedding):
-    hyper_params = {
-        'method_name': 'lap_eigmap_svd'
-    }
+    hyper_params = {"method_name": "lap_eigmap_svd"}
 
     def __init__(self, *args, **kwargs):
-        """ Initialize the LaplacianEigenmaps class
+        """Initialize the LaplacianEigenmaps class
 
         Args:
             d: dimension of the embedding
         """
-        super(LaplacianEigenmaps, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def learn_embedding(self, graph=None,
-                        is_weighted=False, no_python=False):
+    def learn_embedding(self, graph=None, is_weighted=False, no_python=False):
         if not graph:
-            raise ValueError('graph needed')
+            raise ValueError("graph needed")
         graph = graph.to_undirected()
         l_sym = nx.normalized_laplacian_matrix(graph)
 
-        w, v = lg.eigs(l_sym, k=self._d + 1, which='SM')
+        w, v = lg.eigs(l_sym, k=self._d + 1, which="SM")
         idx = np.argsort(w)  # sort eigenvalues
         w = w[idx]
         v = v[:, idx]
@@ -33,10 +30,8 @@ class LaplacianEigenmaps(StaticGraphEmbedding):
 
         p_d_p_t = np.dot(v, np.dot(np.diag(w), v.T))
         eig_err = np.linalg.norm(p_d_p_t - l_sym)
-        print('Laplacian matrix recon. error (low rank): %f' % eig_err)
+        print(f"Laplacian matrix recon. error (low rank): {eig_err}")
         return self._X.real
 
     def get_edge_weight(self, i, j):
-        return np.exp(
-            -np.power(np.linalg.norm(self._X[i, :] - self._X[j, :]), 2)
-        )
+        return np.exp(-np.power(np.linalg.norm(self._X[i, :] - self._X[j, :]), 2))

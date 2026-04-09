@@ -8,33 +8,28 @@ from gem.embedding.static_graph_embedding import StaticGraphEmbedding
 
 
 class LocallyLinearEmbedding(StaticGraphEmbedding):
-    hyper_params = {
-        'method_name': 'lle_svd'
-    }
+    hyper_params = {"method_name": "lle_svd"}
 
     def __init__(self, *args, **kwargs):
-        """ Initialize the LocallyLinearEmbedding class
+        """Initialize the LocallyLinearEmbedding class
 
         Args:
             d: dimension of the embedding
         """
-        super(LocallyLinearEmbedding, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def learn_embedding(self, graph=None,
-                        is_weighted=False, no_python=False):
+    def learn_embedding(self, graph=None, is_weighted=False, no_python=False):
         if not graph:
-            raise ValueError('graph needed')
+            raise ValueError("graph needed")
         graph = graph.to_undirected()
         A = nx.to_scipy_sparse_array(graph)
-        normalize(A, norm='l1', axis=1, copy=False)
+        normalize(A, norm="l1", axis=1, copy=False)
         i_n = sp.eye(len(graph.nodes))
         i_min_A = i_n - A
-        u, s, vt = lg.svds(i_min_A, k=self._d + 1, which='SM')
+        u, s, vt = lg.svds(i_min_A, k=self._d + 1, which="SM")
         self._X = vt.T
         self._X = self._X[:, 1:]
         return self._X.real
 
     def get_edge_weight(self, i, j):
-        return np.exp(
-            -np.power(np.linalg.norm(self._X[i, :] - self._X[j, :]), 2)
-        )
+        return np.exp(-np.power(np.linalg.norm(self._X[i, :] - self._X[j, :]), 2))
