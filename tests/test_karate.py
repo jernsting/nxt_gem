@@ -84,7 +84,7 @@ class KarateTest(unittest.TestCase):
             xeta=0.01,
             n_batch=100,
             modelfile=["enc_model.json", "dec_model.json"],
-            weightfile=["enc_weights.hdf5", "dec_weights.hdf5"],
+            weightfile=["enc_weights.weights.h5", "dec_weights.weights.h5"],
         )
         target = np.loadtxt(os.path.join(self.source_dir, "karate_res/SDNE.txt"))
         self.internal_model_test(model, target, mae_close=True)
