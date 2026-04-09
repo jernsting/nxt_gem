@@ -34,5 +34,8 @@ jobs:
     - name: Run Tests (Optional but recommended)
       run: uv run coverage run -m pytest
 
+    - name: Covert Test output
+      run: uv run coverage lcov -o coverage.lcov
+
     - name: Coveralls
       uses: coverallsapp/github-action@v2
