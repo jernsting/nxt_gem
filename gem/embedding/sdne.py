@@ -1,10 +1,10 @@
 import networkx as nx
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras import backend as KBack
 from tensorflow.keras.layers import Input, Lambda, Subtract
 from tensorflow.keras.models import Model, model_from_json
 from tensorflow.keras.optimizers import SGD
-import tensorflow as tf
 
 from gem.embedding.sdne_utils import (
     batch_generator_sdne,
@@ -143,13 +143,13 @@ class SDNE(StaticGraphEmbedding):
             (
                 tf.TensorSpec(shape=(None, feat_dim + 1), dtype=tf.float32),  # a1
                 tf.TensorSpec(shape=(None, feat_dim + 1), dtype=tf.float32),  # a2
-                tf.TensorSpec(shape=(None, 1), dtype=tf.float32)  # X_ij
-            )
+                tf.TensorSpec(shape=(None, 1), dtype=tf.float32),  # X_ij
+            ),
         )
 
         ds = tf.data.Dataset.from_generator(
             lambda: batch_generator_sdne(sparse, self._beta, self._n_batch, True),
-            output_signature=output_sig
+            output_signature=output_sig,
         )
 
         self._model.fit(
