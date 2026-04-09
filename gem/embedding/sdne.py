@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras import backend as KBack
 from tensorflow.keras.layers import Input, Lambda, Subtract
 from tensorflow.keras.models import Model, model_from_json
@@ -135,8 +136,24 @@ class SDNE(StaticGraphEmbedding):
             loss_weights=[1, 1, self._alpha],
         )
 
-        self._model.fit_generator(
-            generator=batch_generator_sdne(sparse, self._beta, self._n_batch, True),
+        feat_dim = sparse.shape[1]
+
+        output_sig = (
+            tf.TensorSpec(shape=(None, feat_dim * 2), dtype=tf.float32),  # InData
+            (
+                tf.TensorSpec(shape=(None, feat_dim + 1), dtype=tf.float32),  # a1
+                tf.TensorSpec(shape=(None, feat_dim + 1), dtype=tf.float32),  # a2
+                tf.TensorSpec(shape=(None, 1), dtype=tf.float32),  # X_ij
+            ),
+        )
+
+        ds = tf.data.Dataset.from_generator(
+            lambda: batch_generator_sdne(sparse, self._beta, self._n_batch, True),
+            output_signature=output_sig,
+        )
+
+        self._model.fit(
+            ds,
             epochs=self._num_iter,
             steps_per_epoch=sparse.nonzero()[0].shape[0] // self._n_batch,
             verbose=1,
@@ -152,10 +169,10 @@ class SDNE(StaticGraphEmbedding):
             savemodel(self._decoder, self._modelfile[1])
         if self._savefilesuffix is not None:
             saveweights(
-                self._encoder, "encoder_weights_" + self._savefilesuffix + ".hdf5"
+                self._encoder, "encoder_weights_" + self._savefilesuffix + ".weights.h5"
             )
             saveweights(
-                self._decoder, "decoder_weights_" + self._savefilesuffix + ".hdf5"
+                self._decoder, "decoder_weights_" + self._savefilesuffix + ".weights.h5"
             )
             savemodel(self._encoder, "encoder_model_" + self._savefilesuffix + ".json")
             savemodel(self._decoder, "decoder_model_" + self._savefilesuffix + ".json")
@@ -211,10 +228,10 @@ class SDNE(StaticGraphEmbedding):
                 )
                 exit()
             try:
-                decoder.load_weights("decoder_weights_" + filesuffix + ".hdf5")
+                decoder.load_weights("decoder_weights_" + filesuffix + ".weights.h5")
             except (FileNotFoundError, ReferenceError):
                 print(
-                    f"Error reading file: {'decoder_weights_' + filesuffix + '.hdf5'}. Cannot load previous weights"
+                    f"Error reading file: {'decoder_weights_' + filesuffix + '.weights.h5'}. Cannot load previous weights"
                 )
                 exit()
             if node_l is not None:

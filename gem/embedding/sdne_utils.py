@@ -43,12 +43,13 @@ def batch_generator_sdne(X, beta, batch_size, shuffle):
         B_i[X_batch_v_i != 0] = beta
         B_j = np.ones(X_batch_v_j.shape)
         B_j[X_batch_v_j != 0] = beta
-        X_ij = X[row_indices[batch_index], col_indices[batch_index]]
+
+        X_ij = X[row_indices[batch_index], col_indices[batch_index]].reshape(-1, 1)
         deg_i = np.sum(X_batch_v_i != 0, 1).reshape((batch_size, 1))
         deg_j = np.sum(X_batch_v_j != 0, 1).reshape((batch_size, 1))
         a1 = np.append(B_i, deg_i, axis=1)
         a2 = np.append(B_j, deg_j, axis=1)
-        OutData = [a1, a2, X_ij.T]
+        OutData = (a1, a2, X_ij)
         counter += 1
         yield InData, OutData
         if counter == number_of_batches:
@@ -101,7 +102,7 @@ def get_decoder(node_num, d, K, n_units, nu1, nu2, activation_fn):
 
 def get_autoencoder(encoder, decoder):
     # Input
-    x = Input(shape=(encoder.layers[0].input_shape[0][1],))
+    x = Input(shape=(encoder.input.shape[1],))
     # Generate embedding
     y = encoder(x)
     # Generate reconstruction
